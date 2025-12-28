@@ -1,0 +1,282 @@
+* {
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: none;
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: Adwaita-Sans, sans-serif;
+  user-select: none;
+  interpolate-size: allow-keywords;
+
+  --systembarHeight: 2rem;
+  --wrokviewHeight: calc(100vh - var(--systembarHeight));
+  --appSize: 9rem;
+
+  --workspaceScale: 0.3;
+  --workspaceWidth: calc(100vw * var(--workspaceScale));
+  --workspaceHeight: calc(var(--wrokviewHeight) * var(--workspaceScale));
+  --workspaceGap: calc(100vw * 0.1 / 4);
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: url("https://zebreus.github.io/all-gnome-backgrounds/images/amber-d-1938c12fcd42b0c754886904c3465750f249831e.webp");
+  background-size: cover;
+}
+
+#systembar {
+  display: grid;
+  align-items: stretch;
+  height: var(--systembarHeight);
+  padding-inline: 1rem;
+  background: rgba(0,0,0,0.2);
+  color: #fff;
+  flex-shrink: 0;
+
+  #indicator {
+    grid-area: 1/1;
+    justify-self: start;
+    align-content: center;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    &::before {
+      font-size: 0.4rem;
+      content: '';
+      display: block;
+      background: white;
+      height: 1em;
+      aspect-ratio: 3/1;
+      border-radius: 1em;
+    }
+
+    &::after {
+      font-size: 0.4rem;
+      content: '';
+      display: block;
+      background: white;
+      height: 1em;
+      aspect-ratio: 1/1;
+      border-radius: 1em;
+    }
+  }
+
+  #clock {
+    grid-area: 1/1;
+    align-content: center;
+    font-weight: bold;
+    justify-self: center;
+  }
+
+  #icons {
+    grid-area: 1/1;
+    justify-self: end;
+    align-content: center;
+    letter-spacing: 0.5rem;
+    margin-right: -0.5rem;
+  }
+}
+
+/* overview */
+
+#workspaces {
+  overflow: hidden;
+
+  .wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--workspaceGap);
+    padding: var(--workspaceGap);
+    translate: calc((var(--activeWorkspaceIndex, 0) - 1) * -1 * (var(--workspaceWidth) + var(--workspaceGap))) 0;
+    transition: 0.3s;
+
+    &:empty::before {
+      display: block;
+      align-content: center;
+      content: 'No Open Apps..';
+      color: rgba(255,255,255,0.25);
+      font-size: 2rem;
+      height: var(--workspaceHeight);
+      width: var(--workspaceWidth);
+      text-align: center;
+    }
+  }
+
+  .workspace {
+    width: var(--workspaceWidth);
+    height: var(--workspaceHeight);
+    display: grid;
+    flex-shrink: 0;
+    flex-grow: 0;
+    grid-gap: 0.5rem;
+    transition: 0.3s;
+
+    @starting-style {
+      width: 0;
+    }
+
+    &:has(.window:last-child:nth-child(1)) { /* 1 element */
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr;
+    }
+    &:has(.window:last-child:nth-child(2)) { /* 2 elements */
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+    }
+    &:has(.window:last-child:nth-child(3)) { /* 3 elements */
+      grid-template-areas:
+        "a b"
+        "a c";
+      ;
+      .window:first-child {
+        grid-area: a;
+      }
+    }
+    &:has(.window:last-child:nth-child(4)) { /* 4 elements */
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+    }
+  }
+
+  .window {
+    position: relative;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    opacity: 1;
+    transition: scale 0.3s, opacity 0.3s;
+
+    @starting-style {
+      opacity: 0;
+      scale: 0.7;
+    }
+
+    &:hover {
+      scale: 1.025;
+    }
+
+    .icon {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      z-index: 1;
+      width: 5rem;
+      translate: -50% 25%;
+      pointer-events: none;
+      user-select: none;
+      transition: opacity 0.3s;
+    }
+
+    .close {
+      position: absolute;
+      right: 0;
+      top: 0;
+      translate: 50% -50%;
+      z-index: 1;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      font-weight: bold;
+      background: #666;
+      color: #fff;
+      box-shadow: 0 0 3px rgba(0,0,0,0.3);
+      height: 2.2rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+
+      .window:hover & {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+#launcher {
+  min-height: 0;
+  flex-shrink: 1;
+  flex-basis: 0;
+  flex-grow: 1;
+  background: rgba(0,0,0,0.2);
+  overflow: clip;
+
+  & > .wrapper {
+    height: 100%;
+    padding: 3rem;
+  }
+
+  #search {
+    display: block;
+    font-size: 1rem;
+    padding: 1rem 2rem;
+    margin: 0 auto;
+    max-width: 300px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 3rem;
+    margin-bottom: 2rem;
+    color: #fff;
+
+    &::placeholder {
+      color: rgba(255,255,255,0.5);
+    }
+  }
+
+  #apps {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    margin: 0 auto;
+    gap: 1rem;
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      padding: 1rem;
+      background: transparent;
+      transition: background 0.3s;
+      border-radius: 1rem;
+      aspect-ratio: 1/1;
+      width: var(--appSize);
+      color: #fff;
+
+      &:hover {
+        background: rgba(255,255,255,0.2);
+      }
+
+      img {
+        flex: 1;
+        min-height: 0;
+        filter: drop-shadow(0 0 5px rgba(0,0,0,0.5));
+      }
+    }
+  }
+}
+
+/* workview */
+
+:root:not(.overview) {
+  --workspaceScale: 1;
+
+  #workspaces {
+    .wrapper {
+      padding: 0;
+      translate: calc(var(--activeWorkspaceIndex, 0) * -1 * (var(--workspaceWidth) + var(--workspaceGap))) 0;
+    }
+
+    .window {
+      &:hover {
+        scale: unset;
+      }
+      .icon, .close {
+        opacity: 0 !important;
+      }
+    }
+  }
+}
