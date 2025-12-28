@@ -2,6 +2,8 @@
 
 Over the holidays something sparked my motivation for making GNOME a tiling first window manager. I re-visited different resources like the [Forge extension](https://github.com/forge-ext/forge) and the blog post [Rethinking Window Management](https://blogs.gnome.org/tbernard/2023/07/26/rethinking-window-management/) and decided to give it a shot. The result is a tiny web app serving as a proof of concept to get a better feeling of the idea which was heavily inspired by the [mockups](https://gitlab.gnome.org/Teams/Design/os-mockups/-/tree/master/mobile-shell/tiling) of @bertob.
 
+**[Click here to try the DEMO yourself](https://robbendebiene.github.io/GNOME-Tiling-First-PoC/)**
+
 https://github.com/user-attachments/assets/8690ad36-dad7-4f73-95b4-eefd989fd689
 
 ## Working principle
